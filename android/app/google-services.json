@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572287641690",
+    "project_id": "emart-shopping-app-baba-devs",
+    "storage_bucket": "emart-shopping-app-baba-devs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572287641690:android:e5dc41f57652aed7191063",
+        "android_client_info": {
+          "package_name": "com.example.emart_ecommerce_app_baba_devs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6JY7qwebS62S8lk8wTunMAhYfKWmRwsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
