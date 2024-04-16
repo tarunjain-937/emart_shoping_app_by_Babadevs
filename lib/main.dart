@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "E-Mart shopping app",
+      title: "EMart shopping app",
       debugShowCheckedModeBanner: false,
       defaultTransition: Transition.cupertino,
       initialRoute: "/",
