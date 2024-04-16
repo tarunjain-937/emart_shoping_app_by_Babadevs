@@ -1,4 +1,7 @@
+import 'package:emart_ecommerce_app_baba_devs/apps/Controller/authController.dart';
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/authScreen/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -8,6 +11,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -52,10 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   // Logout Button
-                  ElevatedButton(onPressed: (){
-                    // log out functionality
+                  ElevatedButton(onPressed: () async{
+                    await Get.put(AuthController()).signOutMethod();
+                    Get.offAll(()=> LoginScreen());
                   },
-                      child: const Text("LogOut",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),))
+                      child: const Text("Log Out",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),))
                 ],
               ),
 

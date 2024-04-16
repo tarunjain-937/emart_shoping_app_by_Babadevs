@@ -1,5 +1,9 @@
+import 'package:emart_ecommerce_app_baba_devs/apps/Controller/authController.dart';
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/Home/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../consts/firebase_const.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -9,6 +13,8 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  
+  var controller = Get.put(AuthController());
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
@@ -23,11 +29,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   // on field submitted user's login credentials are stored here
   late String _email, _password, _confirmPassword, _username;
-
-  //signup functionality here
-  signUp(){
-    Get.offNamed("/login");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +170,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       focusNode: confirmPasswordField,
                       onFieldSubmitted: (value) {
                         FocusScope.of(context).dispose();
-                        if(_formKey.currentState!.validate()){
-                          signUp();
-                        }
                       },
                       onChanged: (value) {
                         _confirmPassword = value;
@@ -184,18 +182,52 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: (){
-                    if(_formKey.currentState!.validate()){
-                      signUp();
-                    }
-                  },
-                  style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
+              Obx(
+                ()=> SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async{
+
+                      // if statement  start from here
+                      if(
+                      _formKey.currentState!.validate()
+                      ){
+                        // if block start from here
+                        controller.isLoding.value = true;
+
+                        try{
+                          await controller.signUpMethod(
+                              email: emailController.text.toString(),
+                              password: passwordController.text.toString(),
+                          ).then((value) {
+                            return controller.storeUserData(
+                            name: usernameController.text.toString(),
+                            email: emailController.text.toString(),
+                            password: passwordController.text.toString(),
+                          );
+                          }).then((value) {
+                            controller.isLoding.value = false;
+                            Get.snackbar("SignUp Successfully", "Thankyou for Registering Yourself");
+                            return Get.off(const Home());
+                          });
+                        } catch(error){
+                          auth.signOut();
+                          controller.isLoding.value = false;
+                          Get.snackbar("Logged Out Successfully", error.toString());
+                        }
+                        // if block ends here
+                      }else{
+                        controller.isLoding.value = false;
+                      }
+                      // if statement end here
+                    },
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
+                    ),
+                    child: controller.isLoding.value == true ?
+                    const Center(child: CircularProgressIndicator(color: Colors.white,)):
+                    const Text("SignUp",style: TextStyle(fontSize: 20, color: Colors.white),),
                   ),
-                  child: const Text("SignUp",style: TextStyle(fontSize: 20, color: Colors.white),),
                 ),
               ),
               const SizedBox(height: 10),

@@ -1,3 +1,6 @@
+import 'package:emart_ecommerce_app_baba_devs/apps/Controller/authController.dart';
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/Home/Home.dart';
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/authScreen/SignupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +13,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  var controller = Get.put(AuthController());
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -21,11 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // on field submitted user's login credentials are stored here
   late String _email, _password, _confirmPassword;
-
-  //login functionality here
-  login(){
-    Get.offNamed("/home");
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -136,9 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         focusNode: confirmPasswordField,
                         onFieldSubmitted: (value) {
                           FocusScope.of(context).dispose();
-                          if(_formKey.currentState!.validate()){
-                            login();
-                          }
                         },
                         onChanged: (value) {
                           _confirmPassword = value;
@@ -149,25 +147,48 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(onPressed: (){
                         // Forgot password
-                        Get.toNamed("/forgotPassword");
                       }, child: const Text("Forgot Password?",style: TextStyle(fontSize: 18,color: Colors.deepPurple),)),
                     ],
                   ),
               ),
+
+              //Login Button
               const SizedBox(height: 10),
-              SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                      onPressed: (){
-                        if(_formKey.currentState!.validate()){
-                          login();
-                        }
-                      },
-                      style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
-                      ),
-                      child: const Text("Login",style: TextStyle(fontSize: 20, color: Colors.white),),
-                  ),
+              Obx(
+                ()=> SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: (){
+                          controller.isLoding.value = true;
+                          if(
+                          _formKey.currentState!.validate() &&
+                              (passwordController.text.toString() == confirmPasswordController.text.toString())
+                          ){
+                            controller.loginMethod(
+                              password: passwordController.text.toString(),
+                              email: emailController.text.toString(),
+                            ).then((value){
+                              if(value != null){
+                                // user has logged in successfully
+                                controller.isLoding.value = false;
+                                Get.snackbar("Logged in Successfully", "Welcome to eMart Shopping App");
+                                Get.offAll(()=> Home());
+                              }else{
+                                controller.isLoding.value = false;
+                              }
+                            });
+                          }
+                        },
+                        style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(Colors.deepPurple),
+                        ),
+                        child: controller.isLoding.value == true?
+                        const CircularProgressIndicator(
+                          color: Colors.white,
+                        ):
+                        const Text("Login",style: TextStyle(fontSize: 20, color: Colors.white),),
+                    ),
+                ),
               ),
               const SizedBox(height: 10),
               Row(
@@ -176,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text("Or, Create a new account with",style: TextStyle(fontSize: 18,color: Colors.black,fontWeight: FontWeight.normal),),
                   TextButton(onPressed: (){
                     // sign up Navigation
-                    Get.toNamed("/signup");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupScreen(),));
                   }, child: const Text("SignUp",style: TextStyle(fontSize: 18,color: Colors.deepPurple,fontWeight: FontWeight.w600),),)
                 ],
               )

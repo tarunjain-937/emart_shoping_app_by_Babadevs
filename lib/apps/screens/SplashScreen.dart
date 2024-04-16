@@ -1,7 +1,10 @@
-import 'dart:async';
-
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/Home/Home.dart';
+import 'package:emart_ecommerce_app_baba_devs/apps/screens/authScreen/LoginScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../consts/firebase_const.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -16,8 +19,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Get.offNamed("/login");
+    auth.authStateChanges().listen((User? user) {
+      if(user == null && mounted ){
+        // No user has login yet
+        Get.off(()=> LoginScreen());
+      }else{
+        // A user has login
+        Get.off(()=> Home());
+      }
     });
   }
 
@@ -28,3 +37,15 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
